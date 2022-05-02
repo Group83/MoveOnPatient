@@ -2,12 +2,15 @@
   "name": "moveonpatient",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
+  "homepage": "https://{username}.github.io",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@expo/vector-icons": "^12.0.0",
@@ -30,7 +33,8 @@
     "react-native-web": "0.17.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "gh-pages": "^3.2.3"
   },
   "private": true
 }
