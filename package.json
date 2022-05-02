@@ -2,7 +2,7 @@
   "name": "moveonpatient",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
-  "homepage": "https://{username}.github.io",
+  "homepage": "https://gitname.github.io/react-gh-pages",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "build": "react-scripts build"
   },
   "dependencies": {
     "@expo/vector-icons": "^12.0.0",
