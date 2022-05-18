@@ -52,8 +52,8 @@ export default function Login({ navigation }) {
       })
       .then(
         (result) => {
-
           if (result[0]) { //found user
+            console.log(result);
             navigation.navigate('Mood', { id: result[0].IdPatient, name: result[0].NicknamePatient });
           }
           else { //not found user

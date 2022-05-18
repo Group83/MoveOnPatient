@@ -75,8 +75,7 @@ export default function Rate(props) {
       })
       .then(
         (result) => {
-          alert('OK');
-          props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name });
+          props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back:activity});
         }, error => {
           console.log("err post=", error);
         })
@@ -206,7 +205,7 @@ export default function Rate(props) {
             titleStyle={styles.titleStyle}
             containerStyle={styles.containerStyle}
             onPress={() => {
-              props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name });
+              props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back:activity });
             }}
           />
         </View>

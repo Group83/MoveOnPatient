@@ -9,6 +9,7 @@ import Login from './Pages/Login';
 import Mood from './Pages/Mood';
 import MainPage from './Pages/MainPage';
 import Rate from './Pages/Rate';
+import AddActivity from './Pages/AddActivity';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +40,8 @@ export default function App() {
         <Stack.Screen name='Log in' component={Login} options={{ headerShown: false }} />
         <Stack.Screen name='Mood' component={Mood} />
         <Stack.Screen name='Main Page' component={MainPage} /> 
-        <Stack.Screen name='Rate' component={Rate} />        
+        <Stack.Screen name='Rate' component={Rate} />       
+        <Stack.Screen name='Add Activity' component={AddActivity} />  
       </Stack.Navigator>
     </NavigationContainer >
   );

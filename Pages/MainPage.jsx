@@ -1,11 +1,10 @@
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, Linking } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import WeekView, { createFixedWeekDate, addLocale } from 'react-native-week-view';
-import {Header,Icon, Button } from 'react-native-elements';
+import { Header, Icon, Button } from 'react-native-elements';
 import * as Progress from 'react-native-progress';
 import moment from 'moment';
 import Overlay from 'react-native-modal-overlay';
-//import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function MainPage(props) {
 
@@ -19,6 +18,8 @@ export default function MainPage(props) {
   const [tirgul, setTirgul] = useState();
   const [pnai, setPnai] = useState();
   const [tifkud, setTifkud] = useState();
+  //total
+  const total = (pnai + tifkud + tirgul) / 3;
 
   //Events list fron DATA
   const [myEvents, setMyEvents] = useState([]);
@@ -34,13 +35,12 @@ export default function MainPage(props) {
   const [visible, setVisible] = useState(false);
   const toggleOverlay = (e) => {
     setVisible(!visible);
-    setIdAct(e.id);
     setActivity(e);
     { e.rate == 1 ? setDisabled(true) : setDisabled(false) }
   };
+  const [ref, setRef] = useState(0);
 
   //selected activity - on press activity
-  const [idAct, setIdAct] = useState(0);
   const [activity, setActivity] = useState();
 
   //DATA url
@@ -48,6 +48,8 @@ export default function MainPage(props) {
   const apiUrlpercent = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/Patient?id";
   //events
   const apiUrlEvents = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/PatientActivity?id";
+  //delete
+  const urlDelete = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/PatientActivity?id";
 
   //EVERY RENDER
   useEffect(() => {
@@ -99,7 +101,6 @@ export default function MainPage(props) {
     }).then(
       (response) => response.json()
     ).then((res) => {
-      console.log('OK Events');
       var arr = [];
       if (res) {
         res.map((event, key) => {
@@ -134,33 +135,51 @@ export default function MainPage(props) {
       console.log("err GET Events=", error);
     }).done();
 
-  }, [props.route.params.name]);
+  }, [props.route.params.back, ref]);
 
   const submit = () => {
     setVisible(!visible);
     props.navigation.navigate('Rate', { id: props.route.params.id, name: props.route.params.name, activity: activity });
   }
 
-  const headerfunc = () => {
-    props.navigation.goBack();
+  //DELETE activity
+  const deleteActivity = () => {
+
+    //DELETE activity from data
+    fetch(urlDelete + "=" + activity.id, {
+      method: 'DELETE',
+      headers: new Headers({
+        'Content-Type': 'application/json ; charset=UTP-8',
+        'Accept': 'application/json ; charset=UTP-8'
+      })
+    }).then(res => {
+      return res;
+    }).then((result) => {
+      setRef(!ref);
+      setVisible(!visible);
+      return result;
+    }).catch((error) => {
+      console.log("err GET Activityes=", error);
+    }).done();
+
   }
 
   return (
     <View style={styles.topContainer}>
 
       <Header
-        // rightComponent={<View>
-        //   <TouchableOpacity style={{ marginLeft: 5 }} onPress={headerfunc}>
-        //     <Icon name='angle-left' color='black' size={30} />
-        //   </TouchableOpacity>
-        // </View>}
-        // centerComponent={<View style={{
-        //   display: 'flex',
-        //   flexDirection: 'row',
-        // }}>
-        //   <Text style={{ fontSize: 20, marginRight: 10, marginTop: 12 }}>{props.route.params.name}</Text>
-        //   <Icon name='user-o' color='black' size={25} style={{ marginTop: 10 }} />
-        // </View>}
+        rightComponent={<View>
+          <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => { props.navigation.navigate('Log in') }}>
+            <Icon name='logout' color='black' size={27} style={{ marginTop: 12, transform: [{ rotateY: '180deg' }] }} />
+          </TouchableOpacity>
+        </View>}
+        centerComponent={<View style={{
+          display: 'flex',
+          flexDirection: 'row',
+        }}>
+          <Text style={{ fontSize: 20, marginRight: 10, marginTop: 14 }}>{props.route.params.name}</Text>
+          <Icon name='account-circle' color='black' size={33} style={{ marginTop: 10 }} />
+        </View>}
         containerStyle={{
           backgroundColor: 'white',
           justifyContent: 'space-around',
@@ -170,28 +189,44 @@ export default function MainPage(props) {
       <ImageBackground source={require('../images/background2.png')} resizeMode="cover" style={styles.image}>
 
         <View style={styles.headerView}>
-          <Text style={styles.title1}>היי  {props.route.params.name} ,</Text>
           <Text style={styles.title2}>{todayDate}</Text>
         </View>
 
         <View style={styles.precentView}>
-          <View style={{ backgroundColor: 'rgba(253, 165, 81, 0.7)', height: 70, width: 90, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(253, 165, 81, 0.7)', marginHorizontal: 12, marginLeft: '5%' }}>
+          <View style={{ marginTop: '5%', backgroundColor: 'rgba(253, 165, 81, 0.7)', height: 80, width: 105, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(253, 165, 81, 0.7)', marginHorizontal: 15, marginLeft: '5%' }}>
             <Text style={{ textAlign: 'center', top: -22, fontSize: 18 }}>תרגול</Text>
-            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '500' }}>{tirgul ? Math.round(tirgul * 100) : 0}%</Text>
+            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '400' }}>{tirgul ? Math.round(tirgul * 100) : 0}%</Text>
           </View>
-          <View style={{ backgroundColor: 'rgba(249, 103, 124, 0.63)', height: 70, width: 90, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(249, 103, 124, 0.63)', marginHorizontal: 12 }}>
-            <Text style={{ textAlign: 'center', top: -22, fontSize: 18 }}>תפקוד</Text>
-            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '500' }}>{tifkud ? Math.round(tifkud * 100) : 0}%</Text>
+          <View style={{ marginTop: '5%', backgroundColor: 'rgba(249, 103, 124, 0.63)', height: 80, width: 105, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(249, 103, 124, 0.63)', marginHorizontal: 15 }}>
+            <Text style={{ textAlign: 'center', top: -22, fontSize: 18, marginTop: 1 }}>תפקוד</Text>
+            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '400' }}>{tifkud ? Math.round(tifkud * 100) : 0}%</Text>
           </View>
-          <View style={{ backgroundColor: 'rgba(158, 130, 246, 0.57)', height: 70, width: 90, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(158, 130, 246, 0.57)', marginHorizontal: 12 }}>
-            <Text style={{ textAlign: 'center', top: -22, fontSize: 18 }}>פנאי</Text>
-            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '500' }}>{pnai ? Math.round(pnai * 100) : 0}%</Text>
+          <View style={{ marginTop: '5%', backgroundColor: 'rgba(158, 130, 246, 0.57)', height: 80, width: 105, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(158, 130, 246, 0.57)', marginHorizontal: 15 }}>
+            <Text style={{ textAlign: 'center', top: -22, fontSize: 18, marginTop: 1 }}>פנאי</Text>
+            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '400' }}>{pnai ? Math.round(pnai * 100) : 0}%</Text>
           </View>
         </View>
-        <View style={styles.fillcontainer}>
-          <Progress.Bar progress={tirgul ? tirgul : 0} width={80} color={tirgul < 0.5 ? 'red' : 'lawngreen'} borderWidth={1} borderColor='darkgrey' marginHorizontal={17} />
-          <Progress.Bar progress={tifkud ? tifkud : 0} width={80} color={tifkud < 0.5 ? 'red' : 'lawngreen'} borderWidth={1} borderColor='darkgrey' marginHorizontal={17} />
-          <Progress.Bar progress={pnai ? pnai : 0} width={80} color={pnai < 0.5 ? 'red' : 'lawngreen'} borderWidth={1} borderColor='darkgrey' marginHorizontal={17.5} />
+
+        <View style={{
+          display: 'flex',
+          flexDirection: 'row',
+          marginTop: '5%',
+        }}>
+          <Text style={{ textAlign: 'left', fontSize: 18, marginLeft: '6%', marginTop: 2 }}>ההתקדמות שלי</Text>
+          <Icon name='directions-run' size={27} style={{ marginHorizontal: '2%', transform: [{ rotateY: '180deg' }], top: -2 }} />
+          <Text style={{ textAlign: 'left', fontSize: 18, marginTop: 2 }}>...</Text>
+        </View>
+
+        <View style={styles.totalPer}>
+          <View style={{
+            backgroundColor: total < 0.5 ? 'red' : '#84D982',
+            height: '100%',
+            width: total * 100 + '%',
+            borderWidth: 1,
+            borderRadius: 14,
+            borderColor: total < 0.5 ? 'red' : '#84D982',
+          }}></View>
+          <Text style={styles.totalPerText}>{total ? Math.round(total * 100) : 0}%</Text>
         </View>
 
         <View style={styles.calenderView}>
@@ -218,7 +253,7 @@ export default function MainPage(props) {
             formatDateHeader="dddd DD"
             weekStartsOn={0}
             onEventPress={toggleOverlay} //לחיצה על אירוע
-          //onGridClick={(pressEvent, startHour, date) => { props.navigation.navigate('Rate') }} //לחיצה לשיבוץ פעילות
+            onGridClick={(pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name }) }} //לחיצה לשיבוץ פעילות
           />
 
           <Overlay visible={visible} onBackdropPress={toggleOverlay}
@@ -254,24 +289,36 @@ export default function MainPage(props) {
                 }} />
               <Text style={styles.textSecondary}>{activity ? activity.repetition : '0'} X {activity ? activity.sets : '0'}</Text>
             </View>
-            <View style={{
+            <TouchableOpacity style={{
               display: 'flex',
-              flexDirection: 'row',
-            }}>
+              flexDirection: 'row'
+            }} onPress={() => Linking.openURL(activity ? activity.link ? activity.link : '' : '')}>
               <Icon name='videocam' size={40}
                 style={{
                   marginTop: 10,
                   marginLeft: '18%',
                 }} />
-              <Text style={styles.textSecondary}>{activity ? activity.link ? activity.link : 'לא נמצא סרטון מתאים' : ''}</Text>
+              <Text style={styles.textSecondary}>{activity ? activity.link ? 'לחץ לצפייה בסרטון' : 'לא נמצא סרטון מתאים' : ''}</Text>
+            </TouchableOpacity>
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}>
+              <Button
+                title="דווח ביצוע"
+                buttonStyle={styles.submitButton}
+                titleStyle={{ color: 'black', marginHorizontal: 20, fontSize: 20 }}
+                onPress={submit}
+                disabled={disabled}
+              />
+              <Button
+                title="מחק פעילות"
+                buttonStyle={styles.deleteButton}
+                titleStyle={{ color: 'black', marginHorizontal: 20, fontSize: 20 }}
+                onPress={deleteActivity}
+                disabled={disabled}
+              />
             </View>
-            <Button
-              title="דווח ביצוע"
-              buttonStyle={styles.submitButton}
-              titleStyle={{ color: 'black', marginHorizontal: 20, fontSize: 20 }}
-              onPress={submit}
-              disabled={disabled}
-            />
           </Overlay>
 
         </View>
@@ -283,12 +330,39 @@ export default function MainPage(props) {
 
 const styles = StyleSheet.create({
 
+  totalPerText: {
+    textAlign: 'center',
+    fontSize: 20,
+    top: -27
+  },
+
+  totalPer: {
+    backgroundColor: '#EFEFEF',
+    width: '90%',
+    marginHorizontal: '5%',
+    height: 33,
+    position: 'relative',
+    borderWidth: 1,
+    borderRadius: 15,
+    borderColor: 'black',
+    marginBottom: '5%'
+  },
+
   submitButton: {
     backgroundColor: '#D3DE32',
-    borderColor: '#D3DE32',
+    borderColor: 'rgba(0, 0, 0, 0)',
     borderRadius: 5,
     borderWidth: 1,
-    marginLeft: '37%',
+    marginHorizontal: '5%',
+    marginTop: '15%'
+  },
+
+  deleteButton: {
+    backgroundColor: 'rgba(214, 61, 57, 1)',
+    borderColor: 'rgba(0, 0, 0, 0)',
+    borderRadius: 5,
+    borderWidth: 1,
+    marginHorizontal: '5%',
     marginTop: '15%'
   },
 
@@ -309,7 +383,7 @@ const styles = StyleSheet.create({
 
   Secondarytitle: {
     marginVertical: 5,
-    textAlign: 'right',
+    textAlign: 'left',
     fontSize: 18,
     marginLeft: '13%'
   },
@@ -319,7 +393,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     top: -25,
-    marginLeft: '8.5%',
+    marginHorizontal: '3.5%'
   },
 
   title1: {
@@ -355,17 +429,16 @@ const styles = StyleSheet.create({
   },
 
   precentView: {
-    height: 135,
-    width: '85%',
-    marginTop: '4%',
-    backgroundColor: '#EFEFEF',
+    height: 120,
+    width: '97%',
+    backgroundColor: 'rgba(239, 239, 239, 0.8)',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: '7%',
+    marginHorizontal: '1.5%',
     borderWidth: 1,
-    borderColor: '#EFEFEF',
-    borderRadius: 10
+    borderRadius: 10,
+    borderColor: 'rgba(239, 239, 239, 0.8)',
   },
 
   calenderView: {

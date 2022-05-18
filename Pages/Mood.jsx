@@ -3,6 +3,7 @@ import { Button, Header } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import React, { useState } from 'react';
 import moment from 'moment';
+import Overlay from 'react-native-modal-overlay';
 
 export default function Mood(props) {
 
@@ -33,6 +34,12 @@ export default function Mood(props) {
     setMood(index);
   }
 
+  //Overlay
+  const [visible, setVisible] = useState(false);
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  };
+
   //DATA - url
   //send daily mood
   const apiUrl = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/DailyMood";
@@ -40,7 +47,7 @@ export default function Mood(props) {
   const submit = () => {
 
     if (!mood) { //Check for input
-      alert('לא הוזן מצב רוח');
+      toggleOverlay();
       return;
     }
 
@@ -65,7 +72,7 @@ export default function Mood(props) {
       })
       .then(
         (result) => {
-          props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name });
+          props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name, back: 0 });
         }, error => {
           console.log("err post=", error);
         })
@@ -129,12 +136,32 @@ export default function Mood(props) {
           onPress={submit}
         />
 
+        <Overlay visible={visible} onBackdropPress={toggleOverlay}
+          containerStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', alignItems: 'center' }}
+          childrenWrapperStyle={{ backgroundColor: 'white', borderWidth: 1, borderColor: 'white', borderRadius: 15, alignItems: 'center', width: '80%' }}>
+          <Text style={styles.textSecondary}>
+            נראה שלא הזנת מצב רוח
+          </Text>
+          <Button
+            title="אישור"
+            buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)' }}
+            titleStyle={{ color: 'white', marginHorizontal: 15 }}
+            onPress={toggleOverlay}
+          />
+        </Overlay>
+
       </ImageBackground>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+
+  textSecondary: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 17,
+  },
 
   checkCon: {
     backgroundColor: 'white',
@@ -168,7 +195,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginHorizontal: '20%',
     fontSize: 35,
-    top: -30
+    top: -35
   },
 
   moodType: {
