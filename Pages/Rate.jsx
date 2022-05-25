@@ -46,6 +46,8 @@ export default function Rate(props) {
   //DATA - url
   //send rate
   const apiUrl = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/ActualPatientActivity";
+  //update activity status
+  const apiUrlupdate = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/ActualPatientActivity?id";
 
   const submit = () => {
 
@@ -53,7 +55,7 @@ export default function Rate(props) {
     let obj = [{
       IdPatientActualPatientActivity: activity.id,
       LikeTheActivityActualPatientActivity: like,
-      StatusActualPatientActivity:1,
+      StatusActualPatientActivity: 1,
       ActualLevelOfPerformanceActualPatientActivity: progress,
       DifficultyActualPatientActivity: difficult,
       FreeNoteActualPatientActivity: freeText,
@@ -75,10 +77,33 @@ export default function Rate(props) {
       })
       .then(
         (result) => {
-          props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back:activity});
+          console.log('OK update');
+          props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back: activity.id });
         }, error => {
-          console.log("err post=", error);
+          console.log('update failed', error);
         })
+  }
+
+  const skip = () => { //•••••••CHECK THIS !!!
+
+    console.log('skip');
+    console.log(activity.id);
+
+    //UPDATE activity status
+    fetch(apiUrlupdate + '=' + activity.id + '&status=1', {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json ; charset=UTP-8',
+        'Accept': 'application/json ; charset=UTP-8'
+      })
+    }).then((res) => {
+      console.log('OK update');
+      props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back: activity.id });
+      return res;
+    }).catch((error) => {
+      console.log('update failed', error);
+    }).done();
+
   }
 
   return (
@@ -204,9 +229,7 @@ export default function Rate(props) {
             buttonStyle={styles.buttonSkipStyle}
             titleStyle={styles.titleStyle}
             containerStyle={styles.containerStyle}
-            onPress={() => {
-              props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back:activity });
-            }}
+            onPress={skip}
           />
         </View>
 

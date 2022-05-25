@@ -202,7 +202,7 @@ export default function AddActivity(props) {
                             data={activityType}
                             defaultButtonText={'בחר סוג פעילות'}
                             buttonTextStyle={{ fontSize: 18 }}
-                            buttonStyle={{ height: 40, width: '90%', borderColor: "black", borderWidth: 0.5, borderRadius: 5, marginHorizontal: '5%', marginVertical: '5%', backgroundColor: 'rgba(211, 222, 50, 0.8)' }}
+                            buttonStyle={{ height: 40, width: '90%', borderColor: "black", borderWidth: 0.5, borderRadius: 5, marginHorizontal: '5%', marginVertical: '5%', backgroundColor: '#F0E5CF' }}
                             onSelect={changeActivityType}
                             buttonTextAfterSelection={(selectedItem, index) => {
                                 return selectedItem
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     activity: {
         marginTop: '2%',
         padding: 20,
-        backgroundColor: 'rgba(211, 222, 50, 0.3)',
+        backgroundColor: 'rgba(255, 173, 96, 0.59)',
         display: 'flex',
         borderWidth: 0.3,
         borderRadius: 10,

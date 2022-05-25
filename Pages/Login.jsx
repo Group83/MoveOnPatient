@@ -14,6 +14,7 @@ export default function Login({ navigation }) {
   //User 
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
+  const [patient, setPatient] = useState('');
 
   //Overlay
   const [visible, setVisible] = useState(false);
@@ -23,6 +24,7 @@ export default function Login({ navigation }) {
 
   //DATA - url
   const apiUrl = "https://proj.ruppin.ac.il//igroup83/test2/tar6/api/Patient?email";
+  const apiUrlmood = "https://proj.ruppin.ac.il//igroup83/test2/tar6/api/DailyMood?id";
 
   //check User function
   const checkUser = () => {
@@ -53,8 +55,38 @@ export default function Login({ navigation }) {
       .then(
         (result) => {
           if (result[0]) { //found user
-            console.log(result);
-            navigation.navigate('Mood', { id: result[0].IdPatient, name: result[0].NicknamePatient });
+
+            console.log(result[0]);
+            setPatient(result[0]);
+
+            //GET mood from DB
+            fetch(apiUrlmood + "=" + patient.IdPatient, {
+              method: 'GET',
+              headers: new Headers({
+                'Content-Type': 'application/json ; charset=UTP-8',
+                'Accept': 'application/json ; charset=UTP-8'
+              })
+            })
+              .then(res => {
+                return res.json();
+              })
+              .then(
+                (result) => {
+
+                  console.log('mood : ', result);
+
+                  if (result) {
+                    navigation.navigate('Main Page', { id: patient.IdPatient, name: patient.NicknamePatient, back: 0 });
+                  } else {
+                    navigation.navigate('Mood', { id: patient.IdPatient, name: patient.NicknamePatient });
+                  }
+
+                },
+                (error) => {
+                  console.log("err GET=", error);
+                });
+
+
           }
           else { //not found user
             toggleOverlay();
@@ -74,7 +106,7 @@ export default function Login({ navigation }) {
           <Image
             source={require('../images/newlogo.jpeg')}
             resizeMode='contain'
-            style={{ width: 230, alignSelf:'auto', height: 35 }}
+            style={{ width: 230, alignSelf: 'auto', height: 35 }}
           />
         }
         containerStyle={{

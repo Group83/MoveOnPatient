@@ -2,9 +2,9 @@ import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, Linking } fr
 import React, { useState, useEffect } from 'react';
 import WeekView, { createFixedWeekDate, addLocale } from 'react-native-week-view';
 import { Header, Icon, Button } from 'react-native-elements';
-import * as Progress from 'react-native-progress';
 import moment from 'moment';
 import Overlay from 'react-native-modal-overlay';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function MainPage(props) {
 
@@ -19,7 +19,7 @@ export default function MainPage(props) {
   const [pnai, setPnai] = useState();
   const [tifkud, setTifkud] = useState();
   //total
-  const total = (pnai + tifkud + tirgul) / 3;
+  const total = ((pnai ? pnai : 0) + (tifkud ? tifkud : 0) + (tirgul ? tirgul : 0)) / 3;
 
   //Events list fron DATA
   const [myEvents, setMyEvents] = useState([]);
@@ -66,7 +66,6 @@ export default function MainPage(props) {
       }).then(
         (response) => response.json()
       ).then((res) => {
-        console.log('OK Percent', item);
         if (res) {
           var obj = res.map(percent => percent);
           obj.map((percent) => {
@@ -219,13 +218,13 @@ export default function MainPage(props) {
 
         <View style={styles.totalPer}>
           <View style={{
-            backgroundColor: total < 0.5 ? 'red' : '#84D982',
-            height: '100%',
-            width: total * 100 + '%',
-            borderWidth: 1,
-            borderRadius: 14,
-            borderColor: total < 0.5 ? 'red' : '#84D982',
-          }}></View>
+              backgroundColor: total < 0.3 ? '#FF4949' : total < 0.6 ?'#FF8D29' : '#8BDB81',
+              height: '100%',
+              width: total * 100 + '%',
+              borderWidth: 1,
+              borderRadius: 14,
+              borderColor: total < 0.3 ? '#FF4949' : total < 0.6 ?'#FF8D29' : '#8BDB81',
+            }}></View>
           <Text style={styles.totalPerText}>{total ? Math.round(total * 100) : 0}%</Text>
         </View>
 
@@ -256,6 +255,7 @@ export default function MainPage(props) {
             onGridClick={(pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name }) }} //לחיצה לשיבוץ פעילות
           />
 
+          {/* Activity Overlay */}
           <Overlay visible={visible} onBackdropPress={toggleOverlay}
             containerStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
             childrenWrapperStyle={{ backgroundColor: activity ? activity.color : 'transparent', opacityValue: 5, borderWidth: 1, borderColor: 'rgba(176, 219, 239, 0.83)', borderRadius: 15, alignItems: 'right' }}>
@@ -267,6 +267,7 @@ export default function MainPage(props) {
             </TouchableOpacity>
             <Text style={styles.texttitle}>{activity ? activity.name : ''}</Text>
             <Text style={styles.Secondarytitle}>{activity ? activity.about : ''}</Text>
+
             <View style={{
               display: 'flex',
               flexDirection: 'row',
@@ -278,6 +279,7 @@ export default function MainPage(props) {
                 }} />
               <Text style={styles.textSecondary}>{activity ? moment(activity.startDate).format("HH:MM") : ''}</Text>
             </View>
+
             <View style={{
               display: 'flex',
               flexDirection: 'row',
@@ -289,17 +291,19 @@ export default function MainPage(props) {
                 }} />
               <Text style={styles.textSecondary}>{activity ? activity.repetition : '0'} X {activity ? activity.sets : '0'}</Text>
             </View>
+
             <TouchableOpacity style={{
               display: 'flex',
               flexDirection: 'row'
-            }} onPress={() => Linking.openURL(activity ? activity.link ? activity.link : '' : '')}>
-              <Icon name='videocam' size={40}
+            }} onPress={() => (activity ? activity.link ? Linking.openURL(activity.link) : '' : '')}>
+              <Icon name={activity ? activity.link ? 'videocam' : '' : ''} size={40}
                 style={{
                   marginTop: 10,
                   marginLeft: '18%',
                 }} />
-              <Text style={styles.textSecondary}>{activity ? activity.link ? 'לחץ לצפייה בסרטון' : 'לא נמצא סרטון מתאים' : ''}</Text>
+              <Text style={styles.textSecondary}>{activity ? activity.link ? ' לחץ לצפייה בסרטון' : '' : ''}</Text>
             </TouchableOpacity>
+
             <View style={{
               display: 'flex',
               flexDirection: 'row'
@@ -319,6 +323,7 @@ export default function MainPage(props) {
                 disabled={disabled}
               />
             </View>
+
           </Overlay>
 
         </View>

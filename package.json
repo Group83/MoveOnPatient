@@ -49,7 +49,8 @@
     "react-native-select-dropdown": "^1.13.0",
     "react-native-vector-icons": "^9.1.0",
     "react-native-web": "0.17.1",
-    "react-native-week-view": "^0.12.0"
+    "react-native-week-view": "^0.12.0",
+    "expo-linear-gradient": "~11.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
