@@ -214,7 +214,7 @@ export default function AddActivity(props) {
                         <TextInput
                             defaultValue={fillName}
                             style={styles.input}
-                            placeholder={nameInput.text}
+                            placeholder={'  '+nameInput.text}
                             onChangeText={newText => setName(newText)}
                             placeholderTextColor={nameInput.color}
                             textAlign='right'
@@ -223,7 +223,7 @@ export default function AddActivity(props) {
                             defaultValue={fillLink}
                             style={styles.inputLink}
                             onChangeText={newText => setLink(newText)}
-                            placeholder="כתובת סרטון"
+                            placeholder={'  '+"כתובת סרטון"}
                             placeholderTextColor="#a9a9a9"
                             textAlign='right'
                             multiline={true}
@@ -232,7 +232,7 @@ export default function AddActivity(props) {
                             defaultValue={fillAbout}
                             style={styles.inputDisc}
                             onChangeText={newText => setAbout(newText)}
-                            placeholder={aboutInput.text}
+                            placeholder={'  '+aboutInput.text}
                             placeholderTextColor={aboutInput.color}
                             textAlign='right'
                             multiline={true}
@@ -240,14 +240,14 @@ export default function AddActivity(props) {
                         <TextInput
                             style={styles.input}
                             onChangeText={newText => setSets(newText)}
-                            placeholder="מספר סטים"
+                            placeholder={'  '+"מספר סטים"}
                             placeholderTextColor="#a9a9a9"
                             textAlign='right'
                         />
                         <TextInput
                             style={styles.input}
                             onChangeText={newText => setRepit(newText)}
-                            placeholder="מספר חזרות"
+                            placeholder={'  '+"מספר חזרות"}
                             placeholderTextColor="#a9a9a9"
                             textAlign='right'
                         />
@@ -262,7 +262,7 @@ export default function AddActivity(props) {
                                 <TextInput
                                     style={styles.searchinput}
                                     onChangeText={onChangeSearch}
-                                    placeholder="חיפוש"
+                                    placeholder={'  '+"חיפוש"}
                                     textAlign='right'
                                 />
                             </View>
@@ -349,7 +349,6 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         flexWrap: 'wrap',
         width: '90%',
-        borderBottomWidth: 1,
         fontSize: 15
     },
 
@@ -374,7 +373,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         height: 200,
         width: '92%',
-        borderBottomWidth: 1,
         backgroundColor: 'white',
         borderRadius: 5,
         borderColor: 'black',
@@ -391,7 +389,6 @@ const styles = StyleSheet.create({
         marginHorizontal: '3%',
         backgroundColor: 'white',
         borderRadius: 5,
-        borderBottomWidth: 1,
         fontSize: 15
     },
 
@@ -402,7 +399,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         marginHorizontal: '3%',
         borderRadius: 5,
-        borderBottomWidth: 1,
         fontSize: 15,
         marginTop: '5%'
     },

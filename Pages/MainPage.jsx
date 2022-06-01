@@ -11,6 +11,10 @@ export default function MainPage(props) {
   //Patient id fron Mood page
   const idPatient = props.route.params.id;
 
+  //UpdatePermission
+  const UpdatePermission = props.route.params.UpdatePermission;
+  console.log('UpdatePermission : ', UpdatePermission);
+
   //Types of activities
   const [types] = useState(['תרגול', 'פנאי', 'תפקוד']);
 
@@ -31,12 +35,13 @@ export default function MainPage(props) {
   );
 
   //Overlay
-  const [disabled, setDisabled] = useState(false);
+  const [disabledRate, setDisabledRate] = useState(false);
+  const disabledDelete = (UpdatePermission === 1 ? false : true);
   const [visible, setVisible] = useState(false);
   const toggleOverlay = (e) => {
     setVisible(!visible);
     setActivity(e);
-    { e.rate == 1 ? setDisabled(true) : setDisabled(false) }
+    { e.rate == 1 ? setDisabledRate(true) : setDisabledRate(false) }
   };
   const [ref, setRef] = useState(0);
 
@@ -138,6 +143,7 @@ export default function MainPage(props) {
 
   const submit = () => {
     setVisible(!visible);
+    console.log(activity.id);
     props.navigation.navigate('Rate', { id: props.route.params.id, name: props.route.params.name, activity: activity });
   }
 
@@ -218,13 +224,13 @@ export default function MainPage(props) {
 
         <View style={styles.totalPer}>
           <View style={{
-              backgroundColor: total < 0.3 ? '#FF4949' : total < 0.6 ?'#FF8D29' : '#8BDB81',
-              height: '100%',
-              width: total * 100 + '%',
-              borderWidth: 1,
-              borderRadius: 14,
-              borderColor: total < 0.3 ? '#FF4949' : total < 0.6 ?'#FF8D29' : '#8BDB81',
-            }}></View>
+            backgroundColor: total < 0.3 ? '#FF4949' : total < 0.6 ? '#FF8D29' : '#8BDB81',
+            height: '100%',
+            width: total * 100 + '%',
+            borderWidth: 1,
+            borderRadius: 14,
+            borderColor: total < 0.3 ? '#FF4949' : total < 0.6 ? '#FF8D29' : '#8BDB81',
+          }}></View>
           <Text style={styles.totalPerText}>{total ? Math.round(total * 100) : 0}%</Text>
         </View>
 
@@ -249,10 +255,13 @@ export default function MainPage(props) {
             headerStyle={{ backgroundColor: '#EFEFEF', borderColor: '#EFEFEF' }}
             hoursInDisplay={8} //מקטין את המרווחים בין השעות
             TodayHeaderComponent={MyTodayComponent}
-            formatDateHeader="dddd DD"
+            formatDateHeader="dddd      DD"
             weekStartsOn={0}
             onEventPress={toggleOverlay} //לחיצה על אירוע
-            onGridClick={(pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name }) }} //לחיצה לשיבוץ פעילות
+            onGridClick={UpdatePermission === 1 ? (pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name })}:''} //לחיצה לשיבוץ פעילות
+            headerTextStyle={{ fontSize: 17 }}
+            hourTextStyle={{ fontSize: 14 }}
+            eventContainerStyle={{ size: 30 }}
           />
 
           {/* Activity Overlay */}
@@ -313,14 +322,14 @@ export default function MainPage(props) {
                 buttonStyle={styles.submitButton}
                 titleStyle={{ color: 'black', marginHorizontal: 20, fontSize: 20 }}
                 onPress={submit}
-                disabled={disabled}
+                disabled={disabledRate}
               />
               <Button
                 title="מחק פעילות"
                 buttonStyle={styles.deleteButton}
                 titleStyle={{ color: 'black', marginHorizontal: 20, fontSize: 20 }}
                 onPress={deleteActivity}
-                disabled={disabled}
+                disabled={disabledDelete}
               />
             </View>
 

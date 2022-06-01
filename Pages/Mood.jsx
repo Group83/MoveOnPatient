@@ -72,7 +72,8 @@ export default function Mood(props) {
       })
       .then(
         (result) => {
-          props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name, back: 0 });
+          console.log('ok mood');
+          props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name, UpdatePermission: props.route.params.UpdatePermission, back: 0 });
         }, error => {
           console.log("err post=", error);
         })

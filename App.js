@@ -10,6 +10,7 @@ import Mood from './Pages/Mood';
 import MainPage from './Pages/MainPage';
 import Rate from './Pages/Rate';
 import AddActivity from './Pages/AddActivity';
+import ResetPassword from './Pages/ResetPassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,8 @@ export default function App() {
         <Stack.Screen name='Main Page' component={MainPage} /> 
         <Stack.Screen name='Rate' component={Rate} />       
         <Stack.Screen name='Add Activity' component={AddActivity} />  
+        <Stack.Screen name='Reset Password' component={ResetPassword} />
+        
       </Stack.Navigator>
     </NavigationContainer >
   );

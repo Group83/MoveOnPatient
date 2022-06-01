@@ -56,7 +56,7 @@ export default function Login({ navigation }) {
         (result) => {
           if (result[0]) { //found user
 
-            console.log(result[0]);
+            console.log('Patient : ', result[0]);
             setPatient(result[0]);
 
             //GET mood from DB
@@ -73,20 +73,39 @@ export default function Login({ navigation }) {
               .then(
                 (result) => {
 
-                  console.log('mood : ', result);
+                  console.log('mood : ', result[0]);
 
-                  if (result) {
-                    navigation.navigate('Main Page', { id: patient.IdPatient, name: patient.NicknamePatient, back: 0 });
-                  } else {
-                    navigation.navigate('Mood', { id: patient.IdPatient, name: patient.NicknamePatient });
+                  if (result.Message === "The request is invalid.") {
+
+                    //GET user from DB
+                    fetch(apiUrl + "=" + nickname + "&password=" + password, {
+                      method: 'GET',
+                      headers: new Headers({
+                        'Content-Type': 'application/json ; charset=UTP-8',
+                        'Accept': 'application/json ; charset=UTP-8'
+                      })
+                    })
+                      .then(res => {
+                        return res.json();
+                      })
+                      .then(
+                        (result) => {
+                          navigation.navigate('Main Page', { id: result[0].IdPatient, name: result[0].NicknamePatient, UpdatePermission: result[0].UpdatePermissionPatient, back: 0 });
+                        },
+                        (error) => {
+                          console.log("err GET=", error);
+                        });
+
+                  } else if (typeof (result[0]) !== 'undefined' || result.Message === "The request is invalid.") {
+                    navigation.navigate('Main Page', { id: patient.IdPatient, name: patient.NicknamePatient, UpdatePermission: patient.UpdatePermissionPatient, back: 0 });
                   }
-
+                  else {
+                    navigation.navigate('Mood', { id: patient.IdPatient, name: patient.NicknamePatient, UpdatePermission: patient.UpdatePermissionPatient });
+                  }
                 },
                 (error) => {
                   console.log("err GET=", error);
                 });
-
-
           }
           else { //not found user
             toggleOverlay();
@@ -145,9 +164,8 @@ export default function Login({ navigation }) {
           />
         </View>
 
-
         <TouchableOpacity onPress={() => {
-          // navigation.navigate('Sign Up');
+          navigation.navigate('Reset Password');
         }}>
           <Text style={styles.text}>שכחתי סיסמא</Text>
         </TouchableOpacity>
@@ -217,7 +235,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Arial',
     fontStyle: 'normal',
     fontWeight: 'bold',
-    fontSize: 40,
+    fontSize: 35,
     color: '#000000',
     textAlign: 'left',
   },
