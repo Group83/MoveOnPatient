@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, StyleSheet, SafeAreaView, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { Button, Icon, Header } from 'react-native-elements';
 import React, { useState } from 'react';
 import Overlay from 'react-native-modal-overlay';

@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, Linking, LogBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import WeekView, { createFixedWeekDate, addLocale } from 'react-native-week-view';
 import { Header, Icon, Button } from 'react-native-elements';
 import moment from 'moment';
 import Overlay from 'react-native-modal-overlay';
-import { LinearGradient } from 'expo-linear-gradient';
+
+LogBox.ignoreAllLogs();
 
 export default function MainPage(props) {
 
@@ -13,7 +14,6 @@ export default function MainPage(props) {
 
   //UpdatePermission
   const UpdatePermission = props.route.params.UpdatePermission;
-  console.log('UpdatePermission : ', UpdatePermission);
 
   //Types of activities
   const [types] = useState(['תרגול', 'פנאי', 'תפקוד']);

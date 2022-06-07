@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet, ImageBackground, ScrollView, Switch, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity, TextInput, LogBox } from 'react-native';
 import { Button, Icon, Header } from 'react-native-elements';
 import React, { useState } from 'react';
 import SelectDropdown from 'react-native-select-dropdown';
 import moment from 'moment';
 import Overlay from 'react-native-modal-overlay';
+
+LogBox.ignoreAllLogs();
 
 export default function AddActivity(props) {
     //SET DATE&TIME

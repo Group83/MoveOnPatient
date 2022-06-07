@@ -1,8 +1,10 @@
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, LogBox } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
+
+LogBox.ignoreAllLogs();
 
 export default function Rate(props) {
 

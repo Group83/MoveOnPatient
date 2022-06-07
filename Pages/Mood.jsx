@@ -1,9 +1,11 @@
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, LogBox } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import React, { useState } from 'react';
 import moment from 'moment';
 import Overlay from 'react-native-modal-overlay';
+
+LogBox.ignoreAllLogs();
 
 export default function Mood(props) {
 

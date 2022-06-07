@@ -1,6 +1,6 @@
-import { View, Text, ImageBackground, StyleSheet, SafeAreaView, TouchableOpacity, Image, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
 import { Button, Icon, Header } from 'react-native-elements';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Overlay from 'react-native-modal-overlay';
 
 export default function Login({ navigation }) {
@@ -59,53 +59,8 @@ export default function Login({ navigation }) {
             console.log('Patient : ', result[0]);
             setPatient(result[0]);
 
-            //GET mood from DB
-            fetch(apiUrlmood + "=" + patient.IdPatient, {
-              method: 'GET',
-              headers: new Headers({
-                'Content-Type': 'application/json ; charset=UTP-8',
-                'Accept': 'application/json ; charset=UTP-8'
-              })
-            })
-              .then(res => {
-                return res.json();
-              })
-              .then(
-                (result) => {
 
-                  console.log('mood : ', result[0]);
 
-                  if (result.Message === "The request is invalid.") {
-
-                    //GET user from DB
-                    fetch(apiUrl + "=" + nickname + "&password=" + password, {
-                      method: 'GET',
-                      headers: new Headers({
-                        'Content-Type': 'application/json ; charset=UTP-8',
-                        'Accept': 'application/json ; charset=UTP-8'
-                      })
-                    })
-                      .then(res => {
-                        return res.json();
-                      })
-                      .then(
-                        (result) => {
-                          navigation.navigate('Main Page', { id: result[0].IdPatient, name: result[0].NicknamePatient, UpdatePermission: result[0].UpdatePermissionPatient, back: 0 });
-                        },
-                        (error) => {
-                          console.log("err GET=", error);
-                        });
-
-                  } else if (typeof (result[0]) !== 'undefined' || result.Message === "The request is invalid.") {
-                    navigation.navigate('Main Page', { id: patient.IdPatient, name: patient.NicknamePatient, UpdatePermission: patient.UpdatePermissionPatient, back: 0 });
-                  }
-                  else {
-                    navigation.navigate('Mood', { id: patient.IdPatient, name: patient.NicknamePatient, UpdatePermission: patient.UpdatePermissionPatient });
-                  }
-                },
-                (error) => {
-                  console.log("err GET=", error);
-                });
           }
           else { //not found user
             toggleOverlay();
@@ -115,6 +70,40 @@ export default function Login({ navigation }) {
           console.log("err GET=", error);
         });
   }
+
+  useEffect(() => {
+
+    console.log('useEffect');
+
+    //GET mood from DB
+    fetch(apiUrlmood + "=" + patient.IdPatient, {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json ; charset=UTP-8',
+        'Accept': 'application/json ; charset=UTP-8'
+      })
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(
+        (result) => {
+
+          console.log(result[0]);
+          if (patient) {
+            if (result[0]) {
+              navigation.navigate('Main Page', { id: patient.IdPatient, name: patient.NicknamePatient, UpdatePermission: patient.UpdatePermissionPatient, back: 0 });
+            }
+            else {
+              navigation.navigate('Mood', { id: patient.IdPatient, name: patient.NicknamePatient, UpdatePermission: patient.UpdatePermissionPatient });
+            }
+          }
+        },
+        (error) => {
+          console.log("err GET=", error);
+        });
+
+  }, [patient]);
 
   return (
 
