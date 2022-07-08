@@ -59,8 +59,6 @@ export default function Login({ navigation }) {
             console.log('Patient : ', result[0]);
             setPatient(result[0]);
 
-
-
           }
           else { //not found user
             toggleOverlay();

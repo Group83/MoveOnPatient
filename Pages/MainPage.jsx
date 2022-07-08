@@ -1,13 +1,20 @@
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, Linking, LogBox } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import WeekView, { createFixedWeekDate, addLocale } from 'react-native-week-view';
 import { Header, Icon, Button } from 'react-native-elements';
 import moment from 'moment';
 import Overlay from 'react-native-modal-overlay';
+import registerForPushNotificationsAsync from './registerForPushNotificationsAsync ';
+import * as Notifications from 'expo-notifications';
 
 LogBox.ignoreAllLogs();
 
 export default function MainPage(props) {
+
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   //Patient id fron Mood page
   const idPatient = props.route.params.id;
@@ -56,8 +63,48 @@ export default function MainPage(props) {
   //delete
   const urlDelete = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/PatientActivity?id";
 
+  async function sendPushNotification(expoPushToken) {
+
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: 'Original Title',
+      body: 'And here is the body from phone!',
+      // data: { name: "nir", seconds: new Date().getSeconds()}
+    };
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+    
+  }
+
   //EVERY RENDER
   useEffect(() => {
+
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    // This listener is fired whenever a notification is received while the app is foregrounded 
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log(notification);
+      setNotification(notification);
+    });
+
+    //This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed) 
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+      setNotification(response.notification);
+    });
+
+    // return () => {
+    //   Notifications.removeNotificationSubscription(notificationListener.current); Notifications.removeNotificationSubscription(responseListener.current);
+    // };
 
     types.map((item) => {
 
@@ -257,8 +304,11 @@ export default function MainPage(props) {
             TodayHeaderComponent={MyTodayComponent}
             formatDateHeader="dddd      DD"
             weekStartsOn={0}
+            onGridClick={async () => {
+              await sendPushNotification(expoPushToken);
+            }}
             onEventPress={toggleOverlay} //לחיצה על אירוע
-            onGridClick={UpdatePermission === 1 ? (pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name })}:''} //לחיצה לשיבוץ פעילות
+            //onGridClick={UpdatePermission === 1 ? (pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name }) } : ''} //לחיצה לשיבוץ פעילות
             headerTextStyle={{ fontSize: 17 }}
             hourTextStyle={{ fontSize: 14 }}
             eventContainerStyle={{ size: 30 }}
