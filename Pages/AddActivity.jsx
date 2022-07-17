@@ -127,7 +127,7 @@ export default function AddActivity(props) {
             })
             .then(
                 (result) => {
-                    props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name, back: obj[0].IdActivity });
+                    props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name, back: obj[0].IdActivity, UpdatePermission:props.route.params.UpdatePermission });
                 }, error => {
                     console.log("err post=", error);
                 })
@@ -360,8 +360,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 173, 96, 0.59)',
         display: 'flex',
         borderWidth: 0.3,
-        borderRadius: 10,
-        borderColor: 'black',
+        borderRadius: 5,
         textAlign: 'left',
         fontSize: 15
     },

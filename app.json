@@ -27,6 +27,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "notification":{
+      "icon":"../images/daisy1.jpg"
+   }
   }
 }

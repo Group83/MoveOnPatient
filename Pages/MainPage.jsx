@@ -11,11 +11,6 @@ LogBox.ignoreAllLogs();
 
 export default function MainPage(props) {
 
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
   //Patient id fron Mood page
   const idPatient = props.route.params.id;
 
@@ -29,6 +24,7 @@ export default function MainPage(props) {
   const [tirgul, setTirgul] = useState();
   const [pnai, setPnai] = useState();
   const [tifkud, setTifkud] = useState();
+
   //total
   const total = ((pnai ? pnai : 0) + (tifkud ? tifkud : 0) + (tirgul ? tirgul : 0)) / 3;
 
@@ -62,49 +58,59 @@ export default function MainPage(props) {
   const apiUrlEvents = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/PatientActivity?id";
   //delete
   const urlDelete = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/PatientActivity?id";
+  //alert
+  const apiUrlAlert = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/Alert?id=";
 
-  async function sendPushNotification(expoPushToken) {
 
-    const message = {
-      to: expoPushToken,
-      sound: 'default',
-      title: 'Original Title',
-      body: 'And here is the body from phone!',
-      // data: { name: "nir", seconds: new Date().getSeconds()}
-    };
+  //notification
+  //notifications
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
-    
-  }
 
   //EVERY RENDER
   useEffect(() => {
 
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-
     // This listener is fired whenever a notification is received while the app is foregrounded 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log(notification);
+      //console.log(notification);
       setNotification(notification);
     });
-
     //This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed) 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+      //console.log(response);
       setNotification(response.notification);
     });
 
-    // return () => {
-    //   Notifications.removeNotificationSubscription(notificationListener.current); Notifications.removeNotificationSubscription(responseListener.current);
-    // };
+    const interval = setInterval(() => {
+
+      // console.log(moment(new Date()).format("HH:MM"));
+
+      // //GET notifications
+      // fetch(apiUrlAlert + idPatient, {
+      //   method: 'GET',
+      //   headers: new Headers({
+      //     'Content-Type': 'application/json ; charset=UTP-8',
+      //     'Accept': 'application/json ; charset=UTP-8'
+      //   })
+      // }).then(
+      //   (response) => response.json()
+      // ).then((res) => {
+      //   if (res[0]) {
+      //     console.log('alert : ', res[0]);
+      //   } else {
+      //     console.log('res is empty');
+      //   }
+      //   return res;
+      // }).catch((error) => {
+      //   console.log('alert is empty');
+      // }).done();
+
+    }, 120000);
+
+    //send the notification
+    //sendPushNotification('ExponentPushToken[qXYw-LFMo0cmSzdJ9grsP_]');
 
     types.map((item) => {
 
@@ -186,11 +192,38 @@ export default function MainPage(props) {
       console.log("err GET Events=", error);
     }).done();
 
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current); Notifications.removeNotificationSubscription(responseListener.current);
+      return () => clearInterval(interval);
+    }
+
   }, [props.route.params.back, ref]);
+
+  //send notification
+  async function sendPushNotification(expoPushToken) {
+
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: 'Original Title',
+      body: 'And here is the body from phone!',
+      // data: { name: "nir", seconds: new Date().getSeconds()}
+    };
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  }
 
   const submit = () => {
     setVisible(!visible);
-    console.log(activity.id);
+    //console.log(activity.id);
     props.navigation.navigate('Rate', { id: props.route.params.id, name: props.route.params.name, activity: activity });
   }
 
@@ -247,15 +280,15 @@ export default function MainPage(props) {
         <View style={styles.precentView}>
           <View style={{ marginTop: '5%', backgroundColor: 'rgba(253, 165, 81, 0.7)', height: 80, width: 105, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(253, 165, 81, 0.7)', marginHorizontal: 15, marginLeft: '5%' }}>
             <Text style={{ textAlign: 'center', top: -22, fontSize: 18 }}>תרגול</Text>
-            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '400' }}>{tirgul ? Math.round(tirgul * 100) : 0}%</Text>
+            <Text style={{ textAlign: 'center', top: 5, fontSize: 25, fontWeight: '400' }}>{tirgul ? Math.round(tirgul * 100) : 0}%</Text>
           </View>
           <View style={{ marginTop: '5%', backgroundColor: 'rgba(249, 103, 124, 0.63)', height: 80, width: 105, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(249, 103, 124, 0.63)', marginHorizontal: 15 }}>
             <Text style={{ textAlign: 'center', top: -22, fontSize: 18, marginTop: 1 }}>תפקוד</Text>
-            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '400' }}>{tifkud ? Math.round(tifkud * 100) : 0}%</Text>
+            <Text style={{ textAlign: 'center', top: 5, fontSize: 25, fontWeight: '400' }}>{tifkud ? Math.round(tifkud * 100) : 0}%</Text>
           </View>
           <View style={{ marginTop: '5%', backgroundColor: 'rgba(158, 130, 246, 0.57)', height: 80, width: 105, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(158, 130, 246, 0.57)', marginHorizontal: 15 }}>
             <Text style={{ textAlign: 'center', top: -22, fontSize: 18, marginTop: 1 }}>פנאי</Text>
-            <Text style={{ textAlign: 'center', top: 2, fontSize: 25, fontWeight: '400' }}>{pnai ? Math.round(pnai * 100) : 0}%</Text>
+            <Text style={{ textAlign: 'center', top: 5, fontSize: 25, fontWeight: '400' }}>{pnai ? Math.round(pnai * 100) : 0}%</Text>
           </View>
         </View>
 
@@ -304,11 +337,8 @@ export default function MainPage(props) {
             TodayHeaderComponent={MyTodayComponent}
             formatDateHeader="dddd      DD"
             weekStartsOn={0}
-            onGridClick={async () => {
-              await sendPushNotification(expoPushToken);
-            }}
             onEventPress={toggleOverlay} //לחיצה על אירוע
-            //onGridClick={UpdatePermission === 1 ? (pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name }) } : ''} //לחיצה לשיבוץ פעילות
+            onGridClick={UpdatePermission === 1 ? (pressEvent, startHour, date) => { props.navigation.navigate('Add Activity', { Date: date, StartHour: startHour, id: props.route.params.id, name: props.route.params.name, UpdatePermission: props.route.params.UpdatePermission }) } : ''} //לחיצה לשיבוץ פעילות
             headerTextStyle={{ fontSize: 17 }}
             hourTextStyle={{ fontSize: 14 }}
             eventContainerStyle={{ size: 30 }}

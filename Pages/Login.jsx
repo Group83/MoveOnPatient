@@ -55,10 +55,7 @@ export default function Login({ navigation }) {
       .then(
         (result) => {
           if (result[0]) { //found user
-
-            console.log('Patient : ', result[0]);
             setPatient(result[0]);
-
           }
           else { //not found user
             toggleOverlay();
@@ -70,8 +67,6 @@ export default function Login({ navigation }) {
   }
 
   useEffect(() => {
-
-    console.log('useEffect');
 
     //GET mood from DB
     fetch(apiUrlmood + "=" + patient.IdPatient, {
@@ -86,8 +81,6 @@ export default function Login({ navigation }) {
       })
       .then(
         (result) => {
-
-          console.log(result[0]);
           if (patient) {
             if (result[0]) {
               navigation.navigate('Main Page', { id: patient.IdPatient, name: patient.NicknamePatient, UpdatePermission: patient.UpdatePermissionPatient, back: 0 });

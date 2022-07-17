@@ -1,13 +1,21 @@
 import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, LogBox } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import moment from 'moment';
 import Overlay from 'react-native-modal-overlay';
+import registerForPushNotificationsAsync from './registerForPushNotificationsAsync ';
+import * as Notifications from 'expo-notifications';
 
 LogBox.ignoreAllLogs();
 
 export default function Mood(props) {
+
+  //notifications
+  const [expoPushToken, setExpoPushToken] = useState('');
+  // const [notification, setNotification] = useState(false);
+  // const notificationListener = useRef();
+  // const responseListener = useRef();
 
   const headerfunc = () => {
     props.navigation.goBack();
@@ -45,6 +53,32 @@ export default function Mood(props) {
   //DATA - url
   //send daily mood
   const apiUrl = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/DailyMood";
+  const apiUrlToken = "https://proj.ruppin.ac.il/igroup83/test2/tar6/api/Patient?id=";
+
+  useEffect(() => {
+
+    //get user token (one time in each day)
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    //POST TOKEN
+    fetch(apiUrlToken + idPatient + "&code=" + expoPushToken, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json ; charset=UTP-8',
+        'Accept': 'application/json ; charset=UTP-8'
+      })
+    })
+      .then(res => {
+        return res;
+      })
+      .then(
+        (result) => {
+          console.log('ok token', result[0]);
+        }, error => {
+          console.log("err token=", error);
+        })
+
+  })
 
   const submit = () => {
 
@@ -75,7 +109,7 @@ export default function Mood(props) {
       .then(
         (result) => {
           console.log('ok mood');
-          props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name, UpdatePermission: props.route.params.UpdatePermission, back: 0 });
+          props.navigation.navigate('Main Page', { id: idPatient, name: props.route.params.name, UpdatePermission: props.route.params.UpdatePermission, back: 0, expoPushToken:expoPushToken  });
         }, error => {
           console.log("err post=", error);
         })
@@ -137,6 +171,9 @@ export default function Mood(props) {
           titleStyle={styles.titleStyle}
           containerStyle={styles.containerStyle}
           onPress={submit}
+        // onPress={async () => {
+        //   await sendPushNotification(expoPushToken);
+        // }}
         />
 
         <Overlay visible={visible} onBackdropPress={toggleOverlay}
@@ -198,7 +235,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginHorizontal: '20%',
     fontSize: 35,
-    top: -35
+    top: -30
   },
 
   moodType: {
