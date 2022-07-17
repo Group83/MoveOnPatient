@@ -28,8 +28,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "notification":{
-      "icon":"../images/daisy1.jpg"
-   }
+    "notification": {
+      "icon": "./assets/favicon.png",
+      "color": "#311b92"
+    }
   }
 }

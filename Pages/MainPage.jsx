@@ -68,7 +68,6 @@ export default function MainPage(props) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-
   //EVERY RENDER
   useEffect(() => {
 
@@ -85,32 +84,32 @@ export default function MainPage(props) {
 
     const interval = setInterval(() => {
 
-      // console.log(moment(new Date()).format("HH:MM"));
+      //const time = moment(new Date()).format("hh:mm:ss");
+      //console.log(time);
 
-      // //GET notifications
-      // fetch(apiUrlAlert + idPatient, {
-      //   method: 'GET',
-      //   headers: new Headers({
-      //     'Content-Type': 'application/json ; charset=UTP-8',
-      //     'Accept': 'application/json ; charset=UTP-8'
-      //   })
-      // }).then(
-      //   (response) => response.json()
-      // ).then((res) => {
-      //   if (res[0]) {
-      //     console.log('alert : ', res[0]);
-      //   } else {
-      //     console.log('res is empty');
-      //   }
-      //   return res;
-      // }).catch((error) => {
-      //   console.log('alert is empty');
-      // }).done();
+      //GET notifications
+      fetch(apiUrlAlert + idPatient, {
+        method: 'GET',
+        headers: new Headers({
+          'Content-Type': 'application/json ; charset=UTP-8',
+          'Accept': 'application/json ; charset=UTP-8'
+        })
+      }).then(
+        (response) => response.json()
+      ).then((res) => {
+        if (res[0]) {
+          //console.log('alert : ', res[0]);
+          //send the notification
+          sendPushNotification(res[0]);
+        } else {
+          console.log('res is empty');
+        }
+        return res;
+      }).catch((error) => {
+        console.log('alert is empty');
+      }).done();
 
-    }, 120000);
-
-    //send the notification
-    //sendPushNotification('ExponentPushToken[qXYw-LFMo0cmSzdJ9grsP_]');
+    }, 300000);
 
     types.map((item) => {
 
@@ -192,21 +191,20 @@ export default function MainPage(props) {
       console.log("err GET Events=", error);
     }).done();
 
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current); Notifications.removeNotificationSubscription(responseListener.current);
-      return () => clearInterval(interval);
-    }
-
   }, [props.route.params.back, ref]);
 
   //send notification
-  async function sendPushNotification(expoPushToken) {
+  async function sendPushNotification(notification) {
+
+    // alert(notification.PartA_data);
+    const time = moment(new Date()).format("hh:mm:ss");
+    console.log(time, notification);
 
     const message = {
-      to: expoPushToken,
+      to: notification.Code,
       sound: 'default',
-      title: 'Original Title',
-      body: 'And here is the body from phone!',
+      title: "מחכה לך פעולת " +notification.AlertDateTime + " באפליקציה",
+      body: notification.PartA_data + ' ' + cnotification.PartB_data + ' ' + notification.PartC_data,
       // data: { name: "nir", seconds: new Date().getSeconds()}
     };
 
