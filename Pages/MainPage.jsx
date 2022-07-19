@@ -84,9 +84,6 @@ export default function MainPage(props) {
 
     const interval = setInterval(() => {
 
-      //const time = moment(new Date()).format("hh:mm:ss");
-      //console.log(time);
-
       //GET notifications
       fetch(apiUrlAlert + idPatient, {
         method: 'GET',
@@ -197,14 +194,14 @@ export default function MainPage(props) {
   async function sendPushNotification(notification) {
 
     // alert(notification.PartA_data);
-    const time = moment(new Date()).format("hh:mm:ss");
+    const time = moment(new Date()).format("HH:mm:ss");
     console.log(time, notification);
 
     const message = {
       to: notification.Code,
       sound: 'default',
-      title: "מחכה לך פעולת " +notification.AlertDateTime + " באפליקציה",
-      body: notification.PartA_data + ' ' + cnotification.PartB_data + ' ' + notification.PartC_data,
+      title: "מחכה לך פעולת " + notification.AlertDateTime + " באפליקציה",
+      body: notification.PartA_data + ' ' + notification.PartB_data + ' ' + notification.PartC_data,
       // data: { name: "nir", seconds: new Date().getSeconds()}
     };
 
@@ -217,6 +214,7 @@ export default function MainPage(props) {
       },
       body: JSON.stringify(message),
     });
+
   }
 
   const submit = () => {
