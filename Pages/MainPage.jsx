@@ -81,31 +81,33 @@ export default function MainPage(props) {
       setNotification(response.notification);
     });
 
-    const interval = setInterval(() => {
+    var interval = setInterval(sendPushNotification, 900000);
 
-      //GET notifications
-      fetch(apiUrlAlert + idPatient, {
-        method: 'GET',
-        headers: new Headers({
-          'Content-Type': 'application/json ; charset=UTP-8',
-          'Accept': 'application/json ; charset=UTP-8'
-        })
-      }).then(
-        (response) => response.json()
-      ).then((res) => {
-        if (res[0]) {
-          //console.log('alert : ', res[0]);
-          //send the notification
-          sendPushNotification(res[0], interval);
-        } else {
-          console.log('res is empty');
-        }
-        return res;
-      }).catch((error) => {
-        console.log('alert is empty');
-      }).done();
+    // const interval = setInterval(() => {
 
-    }, 900000); //every 15 min
+    //   // //GET notifications
+    //   // fetch(apiUrlAlert + idPatient, {
+    //   //   method: 'GET',
+    //   //   headers: new Headers({
+    //   //     'Content-Type': 'application/json ; charset=UTP-8',
+    //   //     'Accept': 'application/json ; charset=UTP-8'
+    //   //   })
+    //   // }).then(
+    //   //   (response) => response.json()
+    //   // ).then((res) => {
+    //   //   if (res[0]) {
+    //   //     //console.log('alert : ', res[0]);
+    //   //     //send the notification
+    //   //     sendPushNotification(res[0]);
+    //   //   } else {
+    //   //     console.log('res is empty');
+    //   //   }
+    //   //   return res;
+    //   // }).catch((error) => {
+    //   //   console.log('alert is empty');
+    //   // }).done();
+
+    // }, 900000); //every 15 min
 
     types.map((item) => {
 
@@ -207,30 +209,72 @@ export default function MainPage(props) {
   }, [props.route.params.back, ref]);
 
   //send notification
-  async function sendPushNotification(notification, interval) {
+  async function sendPushNotification() {
 
+    //GET notifications
+    fetch(apiUrlAlert + idPatient, {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json ; charset=UTP-8',
+        'Accept': 'application/json ; charset=UTP-8'
+      })
+    }).then(
+      (response) => response.json()
+    ).then((res) => {
+      if (res[0]) {
+
+        // alert(notification.PartA_data);
+        const time = moment(new Date()).format("HH:mm:ss");
+        console.log(time, res[0]);
+
+        const message = {
+          to: res[0].Code,
+          sound: 'default',
+          title: "מחכה לך פעילות " + res[0].AlertDateTime + " באפליקציה",
+          body: res[0].PartA_data + ' ' + res[0].PartB_data + ' ' + res[0].PartC_data,
+          // data: { name: "nir", seconds: new Date().getSeconds()}
+        };
+
+        fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+
+      } else {
+        console.log('res is empty');
+      }
+      return res;
+    }).catch((error) => {
+      console.log('alert is empty');
+    }).done();
+
+    // // alert(notification.PartA_data);
+    // const time = moment(new Date()).format("HH:mm:ss");
+    // console.log(time, notification);
     // alert(notification.PartA_data);
-    const time = moment(new Date()).format("HH:mm:ss");
-    console.log(time, notification);
-    alert(notification.PartA_data);
 
-    const message = {
-      to: notification.Code,
-      sound: 'default',
-      title: "מחכה לך פעולת " + notification.AlertDateTime + " באפליקציה",
-      body: notification.PartA_data + ' ' + notification.PartB_data + ' ' + notification.PartC_data,
-      // data: { name: "nir", seconds: new Date().getSeconds()}
-    };
+    // const message = {
+    //   to: notification.Code,
+    //   sound: 'default',
+    //   title: "מחכה לך פעולת " + notification.AlertDateTime + " באפליקציה",
+    //   body: notification.PartA_data + ' ' + notification.PartB_data + ' ' + notification.PartC_data,
+    //   // data: { name: "nir", seconds: new Date().getSeconds()}
+    // };
 
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
+    // await fetch('https://exp.host/--/api/v2/push/send', {
+    //   method: 'POST',
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Accept-encoding': 'gzip, deflate',
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(message),
+    // });
 
   }
 
