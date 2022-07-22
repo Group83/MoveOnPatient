@@ -81,33 +81,7 @@ export default function MainPage(props) {
       setNotification(response.notification);
     });
 
-    var interval = setInterval(sendPushNotification, 900000);
-
-    // const interval = setInterval(() => {
-
-    //   // //GET notifications
-    //   // fetch(apiUrlAlert + idPatient, {
-    //   //   method: 'GET',
-    //   //   headers: new Headers({
-    //   //     'Content-Type': 'application/json ; charset=UTP-8',
-    //   //     'Accept': 'application/json ; charset=UTP-8'
-    //   //   })
-    //   // }).then(
-    //   //   (response) => response.json()
-    //   // ).then((res) => {
-    //   //   if (res[0]) {
-    //   //     //console.log('alert : ', res[0]);
-    //   //     //send the notification
-    //   //     sendPushNotification(res[0]);
-    //   //   } else {
-    //   //     console.log('res is empty');
-    //   //   }
-    //   //   return res;
-    //   // }).catch((error) => {
-    //   //   console.log('alert is empty');
-    //   // }).done();
-
-    // }, 900000); //every 15 min
+    setInterval(sendPushNotification, 900000); //every 15 min
 
     types.map((item) => {
 
@@ -209,8 +183,8 @@ export default function MainPage(props) {
   }, [props.route.params.back, ref]);
 
   //send notification
-  async function sendPushNotification() {
-
+  const sendPushNotification = () => {
+    
     //GET notifications
     fetch(apiUrlAlert + idPatient, {
       method: 'GET',
@@ -223,10 +197,11 @@ export default function MainPage(props) {
     ).then((res) => {
       if (res[0]) {
 
-        // alert(notification.PartA_data);
+        //check
         const time = moment(new Date()).format("HH:mm:ss");
         console.log(time, res[0]);
 
+        //make message
         const message = {
           to: res[0].Code,
           sound: 'default',
@@ -235,6 +210,7 @@ export default function MainPage(props) {
           // data: { name: "nir", seconds: new Date().getSeconds()}
         };
 
+        //send message
         fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
           headers: {
@@ -252,29 +228,6 @@ export default function MainPage(props) {
     }).catch((error) => {
       console.log('alert is empty');
     }).done();
-
-    // // alert(notification.PartA_data);
-    // const time = moment(new Date()).format("HH:mm:ss");
-    // console.log(time, notification);
-    // alert(notification.PartA_data);
-
-    // const message = {
-    //   to: notification.Code,
-    //   sound: 'default',
-    //   title: "מחכה לך פעולת " + notification.AlertDateTime + " באפליקציה",
-    //   body: notification.PartA_data + ' ' + notification.PartB_data + ' ' + notification.PartC_data,
-    //   // data: { name: "nir", seconds: new Date().getSeconds()}
-    // };
-
-    // await fetch('https://exp.host/--/api/v2/push/send', {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Accept-encoding': 'gzip, deflate',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(message),
-    // });
 
   }
 
