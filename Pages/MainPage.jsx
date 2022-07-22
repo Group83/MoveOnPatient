@@ -24,9 +24,8 @@ export default function MainPage(props) {
   const [tirgul, setTirgul] = useState();
   const [pnai, setPnai] = useState();
   const [tifkud, setTifkud] = useState();
-
   //total
-  const total = ((pnai ? pnai : 0) + (tifkud ? tifkud : 0) + (tirgul ? tirgul : 0)) / 3;
+  const [total, setTotal] = useState();
 
   //Events list fron DATA
   const [myEvents, setMyEvents] = useState([]);
@@ -97,7 +96,7 @@ export default function MainPage(props) {
         if (res[0]) {
           //console.log('alert : ', res[0]);
           //send the notification
-          sendPushNotification(res[0]);
+          sendPushNotification(res[0], interval);
         } else {
           console.log('res is empty');
         }
@@ -106,7 +105,7 @@ export default function MainPage(props) {
         console.log('alert is empty');
       }).done();
 
-    }, 300000);
+    }, 900000); //every 15 min
 
     types.map((item) => {
 
@@ -143,6 +142,24 @@ export default function MainPage(props) {
         console.log('percent in empty');
       }).done();
     })
+
+    //GET total percent
+    fetch(apiUrlpercent + '=' + idPatient, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json ; charset=UTP-8',
+        'Accept': 'application/json ; charset=UTP-8'
+      })
+    })
+      .then(res => {
+        console.log('ok total res', res);
+      })
+      .then(
+        (result) => {
+          console.log('ok total result', result);
+        }, error => {
+          console.log("err total : ", error);
+        })
 
     //GET patient events from DATA
     fetch(apiUrlEvents + "=" + idPatient, {
@@ -191,11 +208,12 @@ export default function MainPage(props) {
   }, [props.route.params.back, ref]);
 
   //send notification
-  async function sendPushNotification(notification) {
+  async function sendPushNotification(notification, interval) {
 
     // alert(notification.PartA_data);
     const time = moment(new Date()).format("HH:mm:ss");
     console.log(time, notification);
+    alert(notification.PartA_data);
 
     const message = {
       to: notification.Code,
@@ -214,6 +232,8 @@ export default function MainPage(props) {
       },
       body: JSON.stringify(message),
     });
+
+    clearInterval(interval);
 
   }
 

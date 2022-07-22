@@ -73,7 +73,7 @@ export default function Mood(props) {
       })
       .then(
         (result) => {
-          console.log('ok token', result[0]);
+          console.log('ok token');
         }, error => {
           console.log("err token=", error);
         })
