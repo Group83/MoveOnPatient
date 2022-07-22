@@ -150,16 +150,15 @@ export default function MainPage(props) {
         'Content-Type': 'application/json ; charset=UTP-8',
         'Accept': 'application/json ; charset=UTP-8'
       })
-    })
-      .then(res => {
-        console.log('ok total res', res);
-      })
-      .then(
-        (result) => {
-          console.log('ok total result', result);
-        }, error => {
-          console.log("err total : ", error);
-        })
+    }).then(
+      (response) => response.json()
+    ).then((res) => {
+      //console.log('total : ', res[0]);
+      setTotal(res[0].ComplishionPresentae);
+      return res;
+    }).catch((error) => {
+      console.log('total is empty');
+    }).done();
 
     //GET patient events from DATA
     fetch(apiUrlEvents + "=" + idPatient, {
@@ -232,8 +231,6 @@ export default function MainPage(props) {
       },
       body: JSON.stringify(message),
     });
-
-    clearInterval(interval);
 
   }
 
