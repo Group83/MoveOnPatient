@@ -222,7 +222,7 @@ export default function MainPage(props) {
         });
 
       } else {
-        console.log('res is empty');
+        console.log('alert is empty');
       }
       return res;
     }).catch((error) => {
