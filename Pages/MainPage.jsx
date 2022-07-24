@@ -234,7 +234,7 @@ export default function MainPage(props) {
   const submit = () => {
     setVisible(!visible);
     //console.log(activity.id);
-    props.navigation.navigate('Rate', { id: props.route.params.id, name: props.route.params.name, activity: activity });
+    props.navigation.navigate('Rate', { id: props.route.params.id, name: props.route.params.name, activity: activity, UpdatePermission: props.route.params.UpdatePermission  });
   }
 
   //DELETE activity

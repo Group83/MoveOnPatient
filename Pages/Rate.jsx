@@ -80,7 +80,7 @@ export default function Rate(props) {
       .then(
         (result) => {
           console.log('OK update');
-          props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back: activity.id });
+          props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back: activity.id, UpdatePermission: props.route.params.UpdatePermission  });
         }, error => {
           console.log('update failed', error);
         })
@@ -100,7 +100,7 @@ export default function Rate(props) {
       })
     }).then((res) => {
       console.log('OK update');
-      props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back: activity.id });
+      props.navigation.navigate('Main Page', { id: props.route.params.id, name: props.route.params.name, back: activity.id, UpdatePermission: props.route.params.UpdatePermission  });
       return res;
     }).catch((error) => {
       console.log('update failed', error);
