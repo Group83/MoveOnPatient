@@ -25,7 +25,7 @@ export default function MainPage(props) {
   const [pnai, setPnai] = useState();
   const [tifkud, setTifkud] = useState();
   //total
-  const [total, setTotal] = useState();
+  const [total, setTotal] = useState(0);
 
   //Events list fron DATA
   const [myEvents, setMyEvents] = useState([]);
@@ -129,7 +129,6 @@ export default function MainPage(props) {
     }).then(
       (response) => response.json()
     ).then((res) => {
-      //console.log('total : ', res[0]);
       setTotal(res[0].ComplishionPresentae);
       return res;
     }).catch((error) => {
@@ -314,12 +313,12 @@ export default function MainPage(props) {
 
         <View style={styles.totalPer}>
           <View style={{
-            backgroundColor: total < 0.3 ? '#FF4949' : total < 0.6 ? '#FF8D29' : '#8BDB81',
+            backgroundColor: total==0 ? 'rgba(0, 0, 0, 0)' : total < 0.3 ? '#FF4949' : total < 0.6 ? '#FF8D29' : '#8BDB81',
             height: '100%',
             width: total * 100 + '%',
             borderWidth: 1,
             borderRadius: 14,
-            borderColor: total < 0.3 ? '#FF4949' : total < 0.6 ? '#FF8D29' : '#8BDB81',
+            borderColor: total==0 ? 'rgba(0, 0, 0, 0)' : total < 0.3 ? '#FF4949' : total < 0.6 ? '#FF8D29' : '#8BDB81',
           }}></View>
           <Text style={styles.totalPerText}>{total ? Math.round(total * 100) : 0}%</Text>
         </View>
